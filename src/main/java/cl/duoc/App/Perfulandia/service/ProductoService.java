@@ -42,7 +42,7 @@ public class ProductoService {
 
         validarDatosCreate(request);
 
-        Categoria categoria = categoriaService.obtenerCategoriaPorId(request.getIdCategoria());
+        Categoria categoria = categoriaService.buscarPorId(request.getIdCategoria());
 
         Producto producto = Producto.builder()
                 .nombre(request.getNombre())
@@ -65,7 +65,7 @@ public class ProductoService {
 
         validarDatosUpdate(request);
 
-        Categoria categoria = categoriaService.obtenerCategoriaPorId(request.getIdCategoria());
+        Categoria categoria = categoriaService.buscarPorId(request.getIdCategoria());
 
         producto.setNombre(request.getNombre());
         producto.setDescripcion(request.getDescripcion());

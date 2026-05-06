@@ -4,9 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import cl.duoc.App.Perfulandia.dto.request.CategoriaCreateRequest;
-import cl.duoc.App.Perfulandia.dto.request.CategoriaUpdateRequest;
-import cl.duoc.App.Perfulandia.dto.response.CategoriaResponse;
 import cl.duoc.App.Perfulandia.model.Categoria;
 import cl.duoc.App.Perfulandia.repository.CategoriaRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,94 +11,62 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class CategoriaService {
-     private final CategoriaRepository categoriaRepository;
+     // Repositorio que permite acceder a la tabla productos en la base de datos.
+    private final CategoriaRepository categoriaRepository;
 
-    public List<CategoriaResponse> listarCategorias() {
-        return categoriaRepository.findAll()
-                .stream()
-                .map(this::convertirAResponse)
-                .toList();
+    public List<Categoria> listarCategorias() {
+        return categoriaRepository.findAll();
     }
 
-    public List<CategoriaResponse> listarCategoriasActivas() {
-        return categoriaRepository.findByActivoTrue()
-                .stream()
-                .map(this::convertirAResponse)
-                .toList();
+    public List<Categoria> listarCategoriasActivas() {
+        return categoriaRepository.findByActivoTrue();
     }
 
-    public CategoriaResponse buscarPorId(Long id) {
-        Categoria categoria = obtenerCategoriaPorId(id);
-        return convertirAResponse(categoria);
-    }
-
-    public CategoriaResponse crearCategoria(CategoriaCreateRequest request) {
-        validarDatosCreate(request);
-
-        if (categoriaRepository.existsByNombre(request.getNombre())) {
-            throw new RuntimeException("Ya existe una categoría con ese nombre");
-        }
-
-        Categoria categoria = Categoria.builder()
-                .nombre(request.getNombre())
-                .descripcion(request.getDescripcion())
-                .activo(true)
-                .build();
-
-        Categoria categoriaGuardada = categoriaRepository.save(categoria);
-
-        return convertirAResponse(categoriaGuardada);
-    }
-
-    public CategoriaResponse actualizarCategoria(Long id, CategoriaUpdateRequest request) {
-        Categoria categoria = obtenerCategoriaPorId(id);
-
-        validarDatosUpdate(request);
-
-        categoria.setNombre(request.getNombre());
-        categoria.setDescripcion(request.getDescripcion());
-
-        Categoria categoriaActualizada = categoriaRepository.save(categoria);
-
-        return convertirAResponse(categoriaActualizada);
-    }
-
-    public void eliminarCategoria(Long id) {
-        Categoria categoria = obtenerCategoriaPorId(id);
-        categoria.setActivo(false);
-        categoriaRepository.save(categoria);
-    }
-
-    public Categoria obtenerCategoriaPorId(Long id) {
+    public Categoria buscarPorId(Long id) {
         return categoriaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada con ID: " + id));
     }
 
-    private CategoriaResponse convertirAResponse(Categoria categoria) {
-        return CategoriaResponse.builder()
-                .idCategoria(categoria.getIdCategoria())
-                .nombre(categoria.getNombre())
-                .descripcion(categoria.getDescripcion())
-                .activo(categoria.getActivo())
-                .build();
+    public Categoria crearCategoria(Categoria categoria) {
+        validarDatos(categoria);
+
+        if (categoriaRepository.existsByNombre(categoria.getNombre())) {
+            throw new RuntimeException("Ya existe una categoría con ese nombre");
+        }
+
+        categoria.setActivo(true);
+
+        return categoriaRepository.save(categoria);
     }
 
-    private void validarDatosCreate(CategoriaCreateRequest request) {
-        if (request.getNombre() == null || request.getNombre().isBlank()) {
+    public Categoria actualizarCategoria(Long id, Categoria categoriaActualizada) {
+        Categoria categoria = buscarPorId(id);
+
+        validarDatos(categoriaActualizada);
+
+        if (!categoria.getNombre().equalsIgnoreCase(categoriaActualizada.getNombre())
+                && categoriaRepository.existsByNombre(categoriaActualizada.getNombre())) {
+            throw new RuntimeException("Ya existe una categoría con ese nombre");
+        }
+
+        categoria.setNombre(categoriaActualizada.getNombre());
+        categoria.setDescripcion(categoriaActualizada.getDescripcion());
+
+        return categoriaRepository.save(categoria);
+    }
+
+    public void eliminarCategoria(Long id) {
+        Categoria categoria = buscarPorId(id);
+        categoria.setActivo(false);
+        categoriaRepository.save(categoria);
+    }
+
+    private void validarDatos(Categoria categoria) {
+        if (categoria.getNombre() == null || categoria.getNombre().isBlank()) {
             throw new RuntimeException("El nombre de la categoría es obligatorio");
         }
 
-        if (request.getDescripcion() == null || request.getDescripcion().isBlank()) {
-            throw new RuntimeException("La descripción de la categoría es obligatoria");
-        }
-    }
-
-    private void validarDatosUpdate(CategoriaUpdateRequest request) {
-        if (request.getNombre() == null || request.getNombre().isBlank()) {
-            throw new RuntimeException("El nombre de la categoría es obligatorio");
-        }
-
-        if (request.getDescripcion() == null || request.getDescripcion().isBlank()) {
+        if (categoria.getDescripcion() == null || categoria.getDescripcion().isBlank()) {
             throw new RuntimeException("La descripción de la categoría es obligatoria");
         }
     }
