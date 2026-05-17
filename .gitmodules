@@ -1,0 +1,49 @@
+[submodule "services/product"]
+	path = services/product
+	url = https://github.com/ruth-90/product-service.git
+	branch = main
+
+[submodule "services/inventory"]
+	path = services/inventory
+	url = https://github.com/ruth-90/inventory-service.git
+	branch = main
+
+[submodule "services/supplier"]
+	path = services/supplier
+	url = https://github.com/ruth-90/supplier-service.git
+	branch = main
+
+[submodule "services/branch"]
+	path = services/branch
+	url = https://github.com/Polette2000/branch-service.git
+	branch = main
+
+[submodule "services/user"]
+	path = services/user
+	url = https://github.com/Polette2000/user-service.git
+	branch = main
+
+[submodule "services/auth"]
+	path = services/auth
+	url = https://github.com/Polette2000/auth-service.git
+	branch = main
+
+[submodule "services/cart"]
+	path = services/cart
+	url = https://github.com/Darling_user/cart-service.git
+	branch = main
+
+[submodule "services/order"]
+	path = services/order
+	url = https://github.com/Darling_user/order-service.git
+	branch = main
+
+[submodule "services/billing"]
+	path = services/billing
+	url = https://github.com/Darling_user/billing-service.git
+	branch = main
+
+[submodule "services/shipping"]
+	path = services/shipping
+	url = https://github.com/Darling_user/shipping-service.git
+	branch = main
